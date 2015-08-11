@@ -13,10 +13,11 @@ $(function(){
 
   //getting chat data from server per second
   getChatData(); //initial
-  setInterval(getChatData,1000); //repeat
+  var interval= setInterval(getChatData,1000); //repeat
   function getChatData(){
     $.ajax({
       method:"get",
+      timeout:"1000",
       url: "http://"+ip+"/chatdata",
       success: function(data){
         if(localChatData.length<data.length){
@@ -26,6 +27,15 @@ $(function(){
           localChatData=data;
           $(".chatDiv").scrollTop($(".chatDiv")[0].scrollHeight);
         }
+      },
+      error:function (err) {
+        console.log(err);
+        chatTable.append("<tr><td class='name' style='background-color:black'></td><td class='chat' style='background-color:black;color:white'>Server is down!</td></tr>");
+        clearInterval(interval);
+        chatForm.off("submit");
+        chatForm.on("submit",function (event) {
+          event.preventDefault();
+        });
       }
     });
   }
