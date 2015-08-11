@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+    <script src="/chat.js"></script>
+    <title>Chatting App</title>
+  </head>
+  <body>
+    <div class="pageWrapper">
+      <header>
+        <h1>Simple Chat App</h1>
+      </header>
+      <div class="chatDiv">
+        <div class="forAlignOutter">
+          <div class="forAlignInner">
+            <table class="chatTable"></table>
+          </div>
+        </div>
+      </div>
+      <div class="formDiv">
+        <form id="chatForm">
+          <div class="block">
+            <input type="text" name="name" placeholder="Name">
+            <!-- <input type="color" name="color"> -->
+            <select name="color">
+              <optgroup>
+                <option value="#323A54">Dark Gray</option>
+                <option value="#DA4453">Dragon Fruit</option>
+                <option value="#4A89DC">Blue Jeans</option>
+                <option value="#3DAFDA">Aqua</option>
+                <option value="#37BC9B">Mint</option>
+                <option value="#8CC152">Grass</option>
+                <option value="#F6BB42">Sun Flower</option>
+                <option value="#D770AD">Pink Rose</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="block">
+            <input type="text" name="chat">
+            <input type="submit" value="Enter">
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
