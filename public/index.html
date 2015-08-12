@@ -20,11 +20,18 @@
           </div>
         </div>
       </div>
+      <div class="signIn">
+        <p>What's your name?</p>
+        <form>
+          <input id="name" type="text" name="name" placeholder="Name">
+          <input id="chatStart" type="submit" value="Start Chat!">
+        </form>
+        <p>© 2015 coded by Imtaek Hong.</p>
+      </div>
       <div class="formDiv">
         <form id="chatForm">
           <div class="block">
-            <input type="text" name="name" placeholder="Name">
-            <!-- <input type="color" name="color"> -->
+            <input id="hiddenName" type="text" name="name">
             <select name="color">
               <optgroup>
                 <option value="#323A54">Dark Gray</option>

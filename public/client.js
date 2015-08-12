@@ -4,33 +4,84 @@
  */
 
 $(function(){
-  console.log("JS is running");
-
+  //console.log("JS is running");
   var ip = location.host;
   var localChatData = [];
-  var chatTable = $('.chatTable');
-  var chatForm = $('#chatForm');
+  var interval;
+  var users;
 
-  //getting chat data from server per second
-  getChatData(); //initial
-  var interval= setInterval(getChatData,1000); //repeat
+  //name check & enter the chat
+  $('#chatStart').on("click",function (event) {
+    event.preventDefault();
+    var userName=$('#name').val().trim();
+    if(userName.length>2 && userName.length<13){
+      $.ajax({
+        method:"get",
+        url: "http://"+ip+"/users",
+        success: function(data){
+          if(data.indexOf(userName)<0){
+            $.ajax({
+              method:"post",
+              contentType: 'application/json; charset=UTF-8',
+              dataType   : 'json',
+              data: JSON.stringify({user:userName}),
+              url: "http://"+ip+"/users",
+              success: function(data){
+                $('#hiddenName').val(userName);
+                $('.signIn').css('display','none');
+                $('.chatDiv').slideDown();
+                $('.formDiv').slideDown();
+                interval = setInterval(getChatData,1000);
+                $.ajax({
+                  method:"post",
+                  contentType: 'application/json; charset=UTF-8',
+                  dataType   : 'json',
+                  data: JSON.stringify({chat:"[ "+userName+" ] entered. say 'Hi!'"}),
+                  url: "http://"+ip+"/sendChatData",
+                  success: function(data){
+                    $("input[name='chat']").val("").focus();
+                    getChatData();
+                  },
+                });
+              },
+            });
+          } else {
+            alert("Someone is using the name now, please use a different name");
+          }
+        },
+      });
+    } else {
+      alert("Name should be 4~12 digits");
+    }
+  });
+
+  //getting chat data from server & sending user's connection info to server per second
+  var chatTable = $('.chatTable');
   function getChatData(){
     $.ajax({
-      method:"get",
+      method:"post",
       timeout:"1000",
-      url: "http://"+ip+"/chatdata",
+      contentType: 'application/json; charset=UTF-8',
+      dataType   : 'json',
+      data: JSON.stringify({user:$('#hiddenName').val()}),
+      url: "http://"+ip+"/checkChatData",
       success: function(data){
-        if(localChatData.length<data.length){
-          for(i=localChatData.length;i<data.length;i++){
-            chatTable.append("<tr><td class='name' style='background-color:"+data[i].color+";color:white'>"+data[i].name+"</td><td class='chat'style='color:"+data[i].color+"'>"+data[i].chat+"</td></tr>");
+        users=data.users;
+        if(localChatData.length<data.chatData.length){
+          for(i=localChatData.length;i<data.chatData.length;i++){
+            if(data.chatData[i].name){
+              chatTable.append("<tr><td class='name' style='background-color:"+data.chatData[i].color+"; color:white'>"+data.chatData[i].name+"</td><td class='chat'style='color:"+data.chatData[i].color+"'>"+data.chatData[i].chat+"</td></tr>");
+            } else {
+              var localTime=new Date(data.chatData[i].time);
+              chatTable.append("<tr><td class='name'>SYSTEM</td><td class='chat'>"+data.chatData[i].chat+" ("+localTime.toLocaleTimeString()+")</td></tr>");
+            }
           }
-          localChatData=data;
+          localChatData=data.chatData;
           $(".chatDiv").scrollTop($(".chatDiv")[0].scrollHeight);
         }
       },
       error:function (err) {
-        console.log(err);
-        chatTable.append("<tr><td class='name' style='background-color:black'></td><td class='chat' style='background-color:black;color:white'>Server is down!</td></tr>");
+        chatTable.append("<tr><td class='name' style='background-color:black'></td><td class='chat' style='background-color:black;color:white'>Disconnected!</td></tr>");
         clearInterval(interval);
         chatForm.off("submit");
         chatForm.on("submit",function (event) {
@@ -41,11 +92,10 @@ $(function(){
   }
 
   //sending chat data to server on submit
+  var chatForm = $('#chatForm');
   chatForm.on("submit", function(event){
     event.preventDefault();
-    if(event.target.name.value == 0){
-      alert("Please type name");
-    } else if(event.target.chat.value == 0){
+    if(event.target.chat.value == 0){
       alert("Please type message");
     } else {
       $.ajax({
@@ -53,9 +103,8 @@ $(function(){
         contentType: 'application/json; charset=UTF-8',
         dataType   : 'json',
         data: JSON.stringify({name:event.target.name.value,color:event.target.color.value,chat:event.target.chat.value}),
-        url: "http://"+ip+"/chatdata",
+        url: "http://"+ip+"/sendChatData",
         success: function(data){
-          console.log("data sent");
           $("input[name='chat']").val("").focus();
           getChatData();
         },
@@ -63,5 +112,9 @@ $(function(){
     }
   });
 
-
+  //show current users
+  $('#hiddenName').on('click',function(){
+    alert("[Current Users] : "+users);
+    $("input[name='chat']").focus();
+  });
 });
