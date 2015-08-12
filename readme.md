@@ -1,3 +1,3 @@
-#Chat App!
+#Chat App!(node + ajax)
 
-Super simple chat app.
+There are 2 branches. master=v2 and v1. v1 is simple version
