@@ -27,6 +27,7 @@ header{
 h1{
   font-size: 70px;
   margin: 5px;
+  color:white;
 }
 .chatDiv{
   display: none;

@@ -87,6 +87,7 @@ $(function(){
         chatForm.on("submit",function (event) {
           event.preventDefault();
         });
+        $(".chatDiv").scrollTop($(".chatDiv")[0].scrollHeight);
       }
     });
   }
@@ -113,7 +114,8 @@ $(function(){
   });
 
   //show current users
-  $('#hiddenName').on('click',function(){
+  $('#hiddenName').on('mousedown',function(event){
+    event.preventDefault();
     alert("[Current Users] : "+users);
     $("input[name='chat']").focus();
   });
